@@ -54,7 +54,6 @@ var chatMessages = [];
 var maxChatMessages = 10;
 
 var npcs = [];
-
 var npc = function(type, health, x, y, speed){
     this.type=type;
     this.hp=health;
