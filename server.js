@@ -1,6 +1,6 @@
 var mapName = "war.json";
 //process.env.OPENSHIFT_NODEJS_PORT ||process.env.PORT || 
-const PORT = process.env.OPENSHIFT_NODEJS_PORT ||process.env.PORT ||8081;
+const PORT = process.env.OPENSHIFT_NODEJS_PORT ||process.env.PORT ||8080;
 const IP = process.env.OPENSHIFT_NODEJS_IP || process.env.IP || '0.0.0.0';
 
 function getDate(){
