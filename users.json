@@ -159,6 +159,11 @@
 		"name":"rosaflickan",
 		"password":"amanda123",
 		"admin":false
+	},
+	{
+		"name":"sigge",
+		"password":"so9",
+		"admin":false
 	}
     ]
 }
