@@ -1,4 +1,4 @@
-var mapName = "war.json";
+var mapName = "map.json";
 //process.env.OPENSHIFT_NODEJS_PORT ||process.env.PORT || 
 const PORT = process.env.OPENSHIFT_NODEJS_PORT ||process.env.PORT ||8080;
 const IP = process.env.OPENSHIFT_NODEJS_IP || process.env.IP || '0.0.0.0';
@@ -147,13 +147,42 @@ fs.readFile("users.json", function(err, data) {
     readMapFile();
 });
 
+function generateMap (){
+    var blockObj  = function(type, variant, otherData){
+        this.type=type;
+        this.variant=variant;
+        this.otherData=otherData;
+    };
+    var map ={
+        ySize: 50,
+        xSize: 400,
+        gravity:1,
+        jumpStrength:15,
+        leftRightMovementSpeed:10,
+        map
+    };
+    var array = [];
+    for(var y = 0; y < map.ySize; y++){
+        var arrayToPush=[];
+        for(var x = 0; x < map.xSize; x++){
+            arrayToPush.push(new blockObj("air"));
+        }
+        array.push(arrayToPush);
+    }
+    map.map=array;
+    fs.writeFile("../"+mapName, JSON.stringify(map));
+    console.log(getDate() + " Map generated");
+    readMapFile();
+}
+
 function readMapFile(){
     console.log(getDate() + " " + "Reading map.json...");
-fs.readFile(mapName, function(err, data){
+fs.readFile("../"+mapName, function(err, data){
     if(err){
-        return console.error(getDate() + " " + err);
+        console.error(getDate() + " ERROR: Map not found. Generating map...");
+        return generateMap();
     }
-    console.log(getDate() + " " + mapName + " read successfully");
+    console.log(getDate() + " Map read successfully");
     console.log(getDate() + " " + "Creating map array...");
     mapFile = JSON.parse(data);
     if(mapFile.map==undefined){
@@ -175,7 +204,6 @@ function doEverything(){
     console.log(getDate() + " " + "Starting server...");
 // create http server
 var server = http.createServer();
-var port = 8081;
 server.listen(PORT, IP);
 console.log(getDate() + " " + "Server listening on " + IP + ":" + PORT);
 var io = sio.listen(server);
@@ -1513,7 +1541,7 @@ setInterval(movePlayer, 50);
 
 function saveMap(){
     mapFile.map=map;
-    fs.writeFile(mapName, JSON.stringify(mapFile));
+    fs.writeFile("../"+mapName, JSON.stringify(mapFile));
 }
 setInterval(saveMap, 5000);
 
