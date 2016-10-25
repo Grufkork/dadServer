@@ -316,7 +316,7 @@ function getIndexFromId (id){
   }
 }*/
 
-var centralServerAddress = "https://dad-gryphyx.c9users.io:8081";
+var centralServerAddress = "http://139.59.209.179:8081";
 
 var admins=[];
 
@@ -360,7 +360,6 @@ io.sockets.on('connection', function (socket) {
     socket.on("login", function(data) {
         var authSocket = sioClient.connect(centralServerAddress);
         authSocket.on("connect", function(){
-        
             authSocket.emit("checkKey", {key:data.key});
             authSocket.on("keyOk", function(data){
                 players.push({
