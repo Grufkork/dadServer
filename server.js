@@ -36,14 +36,15 @@ console.log(getDate() + " " + "Server starting...");
 
 var http = require("http"),
     sio  = require("socket.io"),
-    fs = require("fs");
+    fs = require("fs"),
+    sioClient = require("socket.io-client");
 
 var maxNpcs = 20;
 var bulletSpeed = 20;
 var life = 1000;
 var maxHealth = 100;
 var map;
-var users;
+//var users;
 var mapFile;
 var canvasSizeX;
 var canvasSizeY;
@@ -136,7 +137,7 @@ function particle(x, y, xs, ys, type, life, color){
 	this.life=life;
 	this.color=color;
 }
-console.log(getDate() + " " + "Reading users.json...");
+/*console.log(getDate() + " " + "Reading users.json...");
 fs.readFile("users.json", function(err, data) {
     if(err){
         return console.error(getDate() + " " + err);
@@ -145,7 +146,7 @@ fs.readFile("users.json", function(err, data) {
     users = JSON.parse(data).users;
     console.log(getDate() + " " + "users.json parsed and array created");
     readMapFile();
-});
+});*/
 
 function generateMap (){
     var blockObj  = function(type, variant, otherData){
@@ -175,6 +176,7 @@ function generateMap (){
     readMapFile();
 }
 
+readMapFile();
 function readMapFile(){
     console.log(getDate() + " " + "Reading map.json...");
 fs.readFile("../"+mapName, function(err, data){
@@ -314,12 +316,12 @@ function getIndexFromId (id){
   }
 }*/
 
-
+var centralServerAddress = "https://dad-gryphyx.c9users.io:8081";
 
 var admins=[];
 
 io.sockets.on('connection', function (socket) {
-    socket.on("adminLogin", function(data){
+    /*socket.on("adminLogin", function(data){
         console.log("adminLoginAttempted");
         var shallDisconnect=true;
         for(var x = 0; x < users.length; x++){
@@ -354,88 +356,77 @@ io.sockets.on('connection', function (socket) {
         if(shallDisconnect){
             socket.emit("loginFailure");socket.disconnect();
         }
-    });
-    socket.on("playerName", function(data) {
-        for(var x = 0; x < users.length; x++){
-            if(data.name.toLowerCase()==users[x].name){
-                if(data.password==users[x].password){
-                    players.push({
-        id:socket.id, 
-        x:0, 
-        y:0, 
-        keys:{
-            up:false,
-            down:false,
-            left:false,
-            right:false
-        },
-        selectedWeapon:0,
-        ySpeed:0,
-        hasJumped:false,
-        messages:[],
-        name:data.name,
-		hp:maxHealth,
-		weapons:{
-			shotgun:{
-				timeSinceFired:0
-			},
-			smg:{
-				timeSinceFired:0
-			},
-			rpg:{
-				timeSinceFired:0
-			},
-			grenade:{
-			    timeSinceFired:0
-			},
-			sniperRifle:{
-			    timeSinceFired:0
-			},
-			taser:{
-			    timeSinceFired:0
-			},
-			shockGrenade:{
-			    timeSinceFired:0
-			},
-			c4:{
-			    timeSinceFired:0
-			}
+    });*/
+    socket.on("login", function(data) {
+        var authSocket = sioClient.connect(centralServerAddress);
+        authSocket.on("connect", function(){
+        
+            authSocket.emit("checkKey", {key:data.key});
+            authSocket.on("keyOk", function(data){
+                players.push({
+                        id:socket.id, 
+                        x:0, 
+                        y:0, 
+                        keys:{
+                            up:false,
+                            down:false,
+                            left:false,
+                            right:false
+                        },
+                        selectedWeapon:0,
+                        ySpeed:0,
+                        hasJumped:false,
+                        messages:[],
+                        name:data.name,
+                		hp:maxHealth,
+                		weapons:{
+                			shotgun:{
+                				timeSinceFired:0
+                			},
+                			smg:{
+                				timeSinceFired:0
+                			},
+                			rpg:{
+                				timeSinceFired:0
+                			},
+                			grenade:{
+                			    timeSinceFired:0
+                			},
+                			sniperRifle:{
+                			    timeSinceFired:0
+                			},
+                			taser:{
+                			    timeSinceFired:0
+                			},
+                			shockGrenade:{
+                			    timeSinceFired:0
+                			},
+                			c4:{
+                			    timeSinceFired:0
+                			}
 
-		},
-		dead:false,
-		shallBeKicked:false,
-		kickReason:"",
-		aimingAt:{
-		    x:0,
-		    y:0
-		},
-		stunned:1,
-		creativeMode:false,
-		timeSinceSwitch:0,
-		timeUntilHealthRegen:0
-    });
-    socket.on("disconnectionRequest", function() {
-        socket.emit("disconnectionConfirmed");
-        socket.disconnect();
-    });
-                    socket.emit("nowConnected", {id:socket.id, canvasSizeX:canvasSizeX, canvasSizeY:canvasSizeY, hp:10});
-                    
-                    console.log(getDate() + " " + data.name + " connected");
-                    shallDisconnect=false;
-                    x=users.length;
-                    connected();
-                }else{
-                    shallDisconnect=true;
-                }
-            }else{
-                var shallDisconnect=true;
-            }
-        }
-        if(shallDisconnect){
-            
-                socket.emit("loginFailure");
-                socket.disconnect();
-        }
+                		},
+                		dead:false,
+                		shallBeKicked:false,
+                		kickReason:"",
+                		aimingAt:{
+                		    x:0,
+                		    y:0
+                		},
+                		stunned:1,
+                		creativeMode:false,
+                		timeSinceSwitch:0,
+                		timeUntilHealthRegen:0
+                    });
+                socket.on("disconnectionRequest", function() {
+                    socket.emit("disconnectionConfirmed");
+                    socket.disconnect();
+                });
+                socket.emit("nowConnected", {id:socket.id, canvasSizeX:canvasSizeX, canvasSizeY:canvasSizeY, hp:10});
+                console.log(getDate() + " " + data.name + " connected");
+                connected();
+            });
+        });
     });
     function connected(){
     
@@ -526,14 +517,14 @@ io.sockets.on('connection', function (socket) {
                         players[w].kickReason=data.message.slice(data.message.indexOf(" ", 7)+1);
                     }
                 }
-            }else if(data.message.slice(1, 10)=="sethealth"&&users[getIndexFromId(data.id)].admin==true){
+            }/*else if(data.message.slice(1, 10)=="sethealth"&&users[getIndexFromId(data.id)].admin==true){
                 for(var w = 0; w < players.length; w++){
                     if(data.message.slice(11, data.message.indexOf(" ", 12)).toLowerCase()==players[w].name.toLowerCase()){
                         players[w].hp=parseInt(data.message.slice(data.message.indexOf(" ", data.message.indexOf(" ", 12))));
                     }
                 }
                 
-            }
+            }*/
         }else{
             chatMessages.splice(0, 0, players[getIndexFromId(data.id)].name + ": " + data.message);
             if(chatMessages[maxChatMessages]!=undefined){
@@ -1545,7 +1536,7 @@ function saveMap(){
 }
 setInterval(saveMap, 5000);
 
-function reloadUsers(){
+/*function reloadUsers(){
     fs.readFile("users.json", function(err, data) {
         if(err){
             return console.error(err);
@@ -1553,8 +1544,8 @@ function reloadUsers(){
         users = JSON.parse(data).users;
         //console.log(getDate() + " " + "users.json reloaded");
     });
-}
+}*/
 
-setInterval(reloadUsers, 60000);
+//setInterval(reloadUsers, 60000);
 
 }
