@@ -1,0 +1,8 @@
+When calling bullet functions, the order of parameters should be (bulletIndex), bullets, players, npcs, map, particles.
+When calling block  functions, the order of parameters should be position, map.
+
+When creating a new bullet, in the onTick function, if you have made a change to any of the arrays, you need to call server.writeNameOfArray.
+For example: server.writeBullets(nameOfBulletArray) or server.writePlayers(nameOfPlayerArray).
+
+
+
