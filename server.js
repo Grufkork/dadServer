@@ -796,7 +796,7 @@ function doEverything() {
                         io.sockets.emit("shotFired", {
                             type: "pistol"
                         });
-                        bullets.push(new bulletTypes.basicBullet.constructor(15, players[playerIndex].x + 10 +
+                        bullets.push(new bulletTypes.basicBullet.constructor(20, players[playerIndex].x + 10 +
                             (Math.cos(Math.atan2((data.y + players[playerIndex].y) - players[playerIndex].y, (data.x + players[playerIndex].x) - players[playerIndex].x)) * 15),
                             players[playerIndex].y + 10 +
                             (Math.sin(Math.atan2((data.y + players[playerIndex].y) - players[playerIndex].y, (data.x + players[playerIndex].x) - players[playerIndex].x)) * 15),

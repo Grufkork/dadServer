@@ -21,5 +21,4 @@ module.exports = function() {
     for (var cBullet = 0; cBullet < bullets.length; cBullet++) {
         bulletTypes[bullets[cBullet].type].onTick(cBullet, bullets, players, npcs, map, particles);
     }
-
 };

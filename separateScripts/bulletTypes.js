@@ -40,9 +40,10 @@ module.exports = {
                     }
                 }
                 for (var cPlayer = 0; cPlayer < players.length; cPlayer++) {
-                    if (positions[n].x > players[cPlayer].x && positions[n].x < players[cPlayer].x + 20 && positions[n].y > players[cPlayer].y && positions[n].y < players[cPlayer].y + 20 && hasHit == false && bullets[bulletIndex].shallSplice == false) {
+                    if (positions[n].x > players[cPlayer].x && positions[n].x < players[cPlayer].x + 20 && positions[n].y > players[cPlayer].y && positions[n].y < players[cPlayer].y + 20 && hasHit == false) {
                         players[cPlayer].hp -= bullets[bulletIndex].dmg;
                         hasHit = true;
+                        players[cPlayer].timeUntilHealthRegen = 200;
                         bullets[bulletIndex].shallSplice = true;
                     }
                 }
