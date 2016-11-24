@@ -26,11 +26,12 @@ module.exports = {
                 else if (map[Math.floor(positions[n].y / 20)][Math.floor(positions[n].x / 20)].type != "air" && hasHit == false) {
                     if (blocks[map[Math.floor(positions[n].y / 20)][Math.floor(positions[n].x / 20)].type].blocksBullets) {
                         bullets[bulletIndex].shallSplice = true;
+                        hasHit = true;
                     }
                     if (blocks[map[Math.floor(positions[n].y / 20)][Math.floor(positions[n].x / 20)].type].onBulletHit != undefined) {
                         blocks[map[Math.floor(positions[n].y / 20)][Math.floor(positions[n].x / 20)].type].onBulletHit(new Coordinate(Math.floor(positions[n].y / 20), Math.floor(positions[n].x / 20)));
                     }
-                    hasHit = true;
+
                 }
                 for (var cNpc = 0; cNpc < npcs.length; cNpc++) {
                     if (positions[n].x > npcs[cNpc].x && positions[n].x < npcs[cNpc].x + 20 && positions[n].y > npcs[cNpc].y && positions[n].y < npcs[cNpc].y + 20 && hasHit == false && bullets[bulletIndex].shallSplice == false) {
